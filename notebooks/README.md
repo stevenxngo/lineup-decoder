@@ -1,6 +1,6 @@
 # Notebooks
 
-This directory contains Jupyter notebooks I created during the process of implementing the lineup decryption process. As a result, the functionality of these notebooks is not intended to be used a standalone tool, but rather as a documentation of my thought process and the steps I took to decrypt the lineup data. The notebooks are organized in the following way:
+This directory contains Jupyter notebooks I created during the process of implementing the lineup decryption process. As a result, the functionality of these notebooks is not intended to be used a standalone tool, but rather as a documentation of my thought process and the steps I took to decrypt the lineup data. The final decryption logic can be found in the `../scripts` directory. The notebooks are organized in the following way:
 
 - `01_data-prep.ipynb`: This notebook contains the data preprocessing steps I took to prepare the data for decryption, including separating artists by lines and converting the data to a csv file.
 
