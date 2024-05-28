@@ -3,10 +3,17 @@ import os
 
 
 # load the data from the txt file
-def load_data(path):
-    with open(path, "r", encoding="utf-8") as f:
+def load_data(file_name):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    input_path = os.path.join(
+        script_dir, "..", "data", "raw", f"{file_name}.txt"
+    )
+    output_path = os.path.join(
+        script_dir, "..", "data", "processed", f"{file_name}.csv"
+    )
+    with open(input_path, "r", encoding="utf-8") as f:
         data = f.readlines()
-    return data
+    return data, output_path
 
 
 # split the data into a list of artists, separated by "|"
@@ -27,14 +34,6 @@ def save_data(artists, path):
 
 # data prep function
 def data_prep(file_name):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    input_path = os.path.join(
-        script_dir, "..", "data", "raw", f"{file_name}.txt"
-    )
-    output_path = os.path.join(
-        script_dir, "..", "data", "processed", f"{file_name}.csv"
-    )
-
-    data = load_data(input_path)
+    data, output_path = load_data(file_name)
     artists = split_data(data)
     save_data(artists, output_path)
