@@ -1,5 +1,4 @@
 import pandas as pd
-import argparse
 import os
 
 
@@ -26,27 +25,9 @@ def save_data(artists, path):
     df.to_csv(path, index=False)
 
 
-# parse the arguments: input file and output file
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Format the lineup txt file to a CSV file."
-    )
-    parser.add_argument(
-        "file_name",
-        type=str,
-        help="Name of the encrypted artist txt file. Note: must be in /data/raw folder and without the .txt extension.",
-    )
-    args = parser.parse_args()
-    file_name = args.file_name
-    return file_name
-
-
-# main function
-def data_prep():
-    file_name = parse_args()
-
+# data prep function
+def data_prep(file_name):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    print(script_dir)
     input_path = os.path.join(
         script_dir, "..", "data", "raw", f"{file_name}.txt"
     )
@@ -57,7 +38,3 @@ def data_prep():
     data = load_data(input_path)
     artists = split_data(data)
     save_data(artists, output_path)
-
-
-if __name__ == "__main__":
-    data_prep()
