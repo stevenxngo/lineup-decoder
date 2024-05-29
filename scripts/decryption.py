@@ -14,7 +14,7 @@ def load_data(file_name):
         script_dir, "..", "data", "processed", f"{file_name}.csv"
     )
     output_path = os.path.join(
-        script_dir, "..", "data", "plaintext", f"{file_name}.txt"
+        script_dir, "..", "data", "decoded_plaintext", f"{file_name}.txt"
     )
     df = pd.read_csv(input_path)
     artists_path = os.path.join(script_dir, "..", "data", "artists.txt")
@@ -188,8 +188,8 @@ def recursive_decrypt(df, num_artists, mappings, artists):
             matches = row["matches"].split(", ")
             blanks = sum(1 for char in plaintext if char == "-")
 
-            # single match and less than 35% blanks
-            if len(matches) == 1 and blanks / len(plaintext) < 0.35:
+            # single match and less than 50% blanks
+            if len(matches) == 1 and blanks / len(plaintext) < 0.5:
                 artist = matches[0]
 
                 # artist already in plaintext
