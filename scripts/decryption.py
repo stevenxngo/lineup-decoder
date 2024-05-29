@@ -114,6 +114,7 @@ def match_artist(pattern, mappings, artists):
             for artist in artists
             if match_pattern(pattern, artist + " (DJ SET)", mappings)
         ]
+        
     # not a DJ SET
     else:
         matches = [
@@ -135,7 +136,6 @@ def match_artists(df, mappings, artists):
 def update_row(df, row_num, mappings, artist, artists):
     # set artist for row
     df.at[row_num, "plaintext"] = artist
-
     cyphertext = df.at[row_num, "cyphertext"]
 
     # update mappings
@@ -173,6 +173,36 @@ def save_data(path, df, mappings):
             f.write(f"{key} -> {value}\n")
 
 
+# recursively decrypt artists
+def recursive_decrypt(df, num_artists, mappings, artists):
+    match_artists(df, mappings, artists)
+    mapping_change = True
+    while mapping_change:
+        mapping_change = False
+        for row_num, row in df.iterrows():
+            # no matches
+            if not row["matches"]:
+                continue
+
+            plaintext = row["plaintext"]
+            matches = row["matches"].split(", ")
+            blanks = sum(1 for char in plaintext if char == "-")
+
+            # single match and less than 35% blanks
+            if len(matches) == 1 and blanks / len(plaintext) < 0.35:
+                artist = matches[0]
+
+                # artist already in plaintext
+                if artist in df["plaintext"].tolist():
+                    continue
+                
+                # update row
+                update_row(df, row_num, mappings, artist, artists)
+                mapping_change = True
+                break
+    return df.head(num_artists).drop(columns=["matches"])
+
+
 # main decryption function
 def decrypt(file_name):
     df, output_path, artists = load_data(file_name)
@@ -180,26 +210,6 @@ def decrypt(file_name):
     df, mappings = init_mappings(df)
     create_plaintext(df)
     update_plaintext(df, mappings)
-    match_artists(df, mappings, artists)
-    match_artists(df, mappings, artists)
-    mapping_change = True
-    while mapping_change:
-        mapping_change = False
-        for row_num, row in df.iterrows():
-            if not row["matches"]:
-                continue
-
-            plaintext = row["plaintext"]
-            matches = row["matches"].split(", ")
-            blanks = sum(1 for char in plaintext if char == "-")
-            if len(matches) == 1 and blanks / len(plaintext) < 0.35:
-                artist = matches[0]
-                if artist in df["plaintext"].tolist():
-                    continue
-
-                update_row(df, row_num, mappings, artist, artists)
-                mapping_change = True
-                break
-    df = df.head(num_artists).drop(columns=["matches"])
+    df = recursive_decrypt(df, num_artists, mappings, artists)
     mappings = sort_mappings(mappings)
     save_data(output_path, df, mappings)
