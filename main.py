@@ -1,5 +1,6 @@
 import argparse
 from scripts.data_prep import data_prep
+from scripts.decryption import decrypt
 
 # parse file name from the command line
 def parse_args():
@@ -20,6 +21,7 @@ def parse_args():
 def main():
     file_name = parse_args()
     data_prep(file_name)
+    decrypt(file_name)
 
 
 if __name__ == "__main__":
