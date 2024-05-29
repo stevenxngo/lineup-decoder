@@ -6,6 +6,8 @@ This directory contains Jupyter notebooks I created during the process of implem
 
 - `02_decryption.ipynb`: This notebook contains the decryption process I used to decrypt the lineup data. The decryption process is based on the assumption that the lineup  is encrypted with a simple substitution cipher. Further information on the algorithm can be found [here](../README.md#algorithm)
 
+- `03_encryption.ipynb`: This notebook contains the process of encrypting plaintext lineup data into ciphertext. This procedure was mainly used to generate test ciphertext data for the decryption process. It is not necessary for the decryption process or the primary goal of the project.
+
 The data used in the notebooks is the encoded lineup from Countdown NYE 2023, which was posted as a teaser on Instagram. The assumption was made that the lineup was encrypted with a simple substitution cipher. As each character in the teaser was an obscure symbol, I manually mapped them to alphanumeric characters prior to preparing the data.
 
 ![Countdown NYE 2023 Teaser](../data/countdown_23/countdown_cyphertext_23.jpg)
