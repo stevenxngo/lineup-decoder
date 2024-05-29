@@ -6,7 +6,7 @@ import os
 def load_data(file_name):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     input_path = os.path.join(
-        script_dir, "..", "data", "raw", f"{file_name}.txt"
+        script_dir, "..", "data", "ciphertext", f"{file_name}.txt"
     )
     output_path = os.path.join(
         script_dir, "..", "data", "processed", f"{file_name}.csv"
