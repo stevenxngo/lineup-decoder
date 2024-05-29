@@ -2,11 +2,12 @@ import os
 import re
 import pandas as pd
 
-
+# define heuristic patterns
 DJ_SET_PATTERN = re.compile(r"\([A-Z0-9]{2} [A-Z0-9]{3}\)")  # DJ SET
 B2B_PATTERN = re.compile(r"(\w+\s)([A-Z0-9])([A-Z0-9])(\2)(\s\w+)")  # B2B
 
 
+# load data from input file
 def load_data(file_name):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     input_path = os.path.join(
@@ -22,6 +23,7 @@ def load_data(file_name):
     return df, output_path, artists
 
 
+# extract heuristic patterns from artist names
 def extract_patterns(df, text):
     mappings = {}
     # DJ SET
@@ -50,6 +52,7 @@ def extract_patterns(df, text):
     return df, mappings
 
 
+# initialize mappings with heuristics
 def init_mappings(df):
     mappings = {}
     for artist in df["cyphertext"]:
@@ -58,12 +61,14 @@ def init_mappings(df):
     return df, mappings
 
 
+# create plaintext column
 def create_plaintext(df):
     df["plaintext"] = df["cyphertext"].apply(
         lambda row: re.sub(r"[A-Za-z0-9]", "-", row)
     )
 
 
+# update plaintext of row with new mappings
 def replace_decoded(row, mappings):
     updated_decoded = []
     for ct, dc in zip(row["cyphertext"], row["plaintext"]):
@@ -74,6 +79,7 @@ def replace_decoded(row, mappings):
     return "".join(updated_decoded)
 
 
+# update plaintext with new mappings
 def update_plaintext(df, mappings):
     df["plaintext"] = df.apply(
         lambda row: replace_decoded(row, mappings), axis=1
@@ -125,6 +131,7 @@ def match_artists(df, mappings, artists):
     )
 
 
+# update row with artist and mappings
 def update_row(df, row_num, mappings, artist, artists):
     # set artist for row
     df.at[row_num, "plaintext"] = artist
@@ -152,6 +159,7 @@ def sort_mappings(mappings):
     return dict(sorted(mappings.items(), key=lambda item: item[1]))
 
 
+# save data to output file
 def save_data(path, df, mappings):
     with open(path, "w", encoding="utf-8") as f:
         # write lineup
@@ -165,6 +173,7 @@ def save_data(path, df, mappings):
             f.write(f"{key} -> {value}\n")
 
 
+# main decryption function
 def decrypt(file_name):
     df, output_path, artists = load_data(file_name)
     num_artists = len(df)
