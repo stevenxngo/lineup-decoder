@@ -39,6 +39,8 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Decryption
+
 1. Place the encrypted lineup text file in the `data/ciphertext` directory
 
 2. Run the main script to prepare the data and decrypt the artist names with the following command (replace `[filename]` with the name of the encrypted lineup file, excluding the file extension):
@@ -47,7 +49,19 @@ pip install -r requirements.txt
 python main.py [filename]
 ```
 
-4. The decrypted lineup will be saved in the `data/decoded_plaintext` directory
+3. The decrypted lineup will be saved in the `data/decoded_plaintext` directory
+
+### Encryption
+
+1. Place the plaintext lineup text file in the `data/plaintext` directory
+
+2. Run the main script with the `-e` flag as per the following command (replace `[filename]` with the name of the plaintext lineup file, excluding the file extension):
+
+```bash
+python main.py [filename] -e
+```
+
+3. The encrypted lineup will be saved in the `data/ciphertext` directory
 
 ## Features
 - Data Preparation: Converts raw encrypted lineup text files into a structured CSV format
