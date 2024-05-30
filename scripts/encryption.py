@@ -23,7 +23,7 @@ def generate_mapping():
     shuffled = list(chars)
     random.shuffle(shuffled)
 
-    mapping = {orig: sub for orig, sub in zip(chars, shuffled)}
+    mapping = dict(zip(chars, shuffled))
     return mapping
 
 
@@ -45,6 +45,7 @@ def save_data(artists, output_path):
             f.write(artist + "\n")
 
 
+# main encryption function
 def encrypt(file_name):
     artists, output_path = load_data(file_name)
     mapping = generate_mapping()

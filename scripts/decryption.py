@@ -1,10 +1,12 @@
 import os
 import re
 import pandas as pd
-
-# define heuristic patterns
-DJ_SET_PATTERN = re.compile(r"\([A-Z0-9]{2} [A-Z0-9]{3}\)")  # DJ SET
-B2B_PATTERN = re.compile(r"(\w+\s)([A-Z0-9])([A-Z0-9])(\2)(\s\w+)")  # B2B
+from .heuristics import (
+    extract_dj_set,
+    extract_sunset_set,
+    extract_throwback_set,
+    extract_b2b,
+)
 
 
 # load data from input file
@@ -26,28 +28,16 @@ def load_data(file_name):
 # extract heuristic patterns from artist names
 def extract_patterns(df, text):
     mappings = {}
-    # DJ SET
-    dj_set_matches = DJ_SET_PATTERN.findall(text)
-    for match in dj_set_matches:
-        cypher_dj_set = match[1:-1]
-        plain_dj_set = "DJ SET"
-        for c, p in zip(
-            cypher_dj_set.replace(" ", ""), plain_dj_set.replace(" ", "")
-        ):
-            mappings[c] = p
+    extract_funcs = [
+        extract_dj_set,
+        extract_sunset_set,
+        extract_throwback_set,
+        extract_b2b,
+    ]
 
-    # B2B
-    b2b_matches = B2B_PATTERN.findall(text)
-    for match in b2b_matches:
-        cypher_b2b = match[1] + match[2]
-        plain_b2b = "B2"
-        for c, p in zip(cypher_b2b, plain_b2b):
-            mappings[c] = p
-
-        # create new rows for b2b artists
-        artists = [match[i].strip() for i in range(0, len(match), 4)]
-        new_df = pd.DataFrame(artists, columns=["cyphertext"])
-        df = pd.concat([df, new_df], ignore_index=True)
+    for func in extract_funcs:
+        df, func_mappings = func(df, text)
+        mappings.update(func_mappings)
 
     return df, mappings
 
@@ -107,21 +97,9 @@ def match_pattern(pattern, artist, mappings):
 
 # match pattern with all artists
 def match_artist(pattern, mappings, artists):
-    # check if pattern is a DJ SET
-    if "(DJ SET)" in pattern:
-        matches = [
-            artist + " (DJ SET)"
-            for artist in artists
-            if match_pattern(pattern, artist + " (DJ SET)", mappings)
-        ]
-        
-    # not a DJ SET
-    else:
-        matches = [
-            artist
-            for artist in artists
-            if match_pattern(pattern, artist, mappings)
-        ]
+    matches = [
+        artist for artist in artists if match_pattern(pattern, artist, mappings)
+    ]
     return ", ".join(matches) if matches else None
 
 
@@ -174,33 +152,28 @@ def save_data(path, df, mappings):
 
 
 # recursively decrypt artists
-def recursive_decrypt(df, num_artists, mappings, artists):
-    match_artists(df, mappings, artists)
-    mapping_change = True
-    while mapping_change:
-        mapping_change = False
+def recursive_decrypt(df, mappings, artists):
+    def match_and_update(df, mappings, artists):
         for row_num, row in df.iterrows():
-            # no matches
             if not row["matches"]:
                 continue
 
             plaintext = row["plaintext"]
             matches = row["matches"].split(", ")
-            blanks = sum(1 for char in plaintext if char == "-")
+            blanks = plaintext.count("-")
 
-            # single match and less than 50% blanks
             if len(matches) == 1 and blanks / len(plaintext) < 0.5:
                 artist = matches[0]
 
-                # artist already in plaintext
-                if artist in df["plaintext"].tolist():
-                    continue
-                
-                # update row
-                update_row(df, row_num, mappings, artist, artists)
-                mapping_change = True
-                break
-    return df.head(num_artists).drop(columns=["matches"])
+                if artist not in df["plaintext"].tolist():
+                    update_row(df, row_num, mappings, artist, artists)
+                    return True
+        return False
+
+    match_artists(df, mappings, artists)
+    while match_and_update(df, mappings, artists):
+        pass
+    return df.drop(columns=["matches"])
 
 
 # main decryption function
@@ -210,6 +183,6 @@ def decrypt(file_name):
     df, mappings = init_mappings(df)
     create_plaintext(df)
     update_plaintext(df, mappings)
-    df = recursive_decrypt(df, num_artists, mappings, artists)
+    df = recursive_decrypt(df, mappings, artists).head(num_artists)
     mappings = sort_mappings(mappings)
     save_data(output_path, df, mappings)
