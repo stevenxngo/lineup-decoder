@@ -54,7 +54,7 @@ def init_mappings(df):
 # create plaintext column
 def create_plaintext(df):
     df["plaintext"] = df["cyphertext"].apply(
-        lambda row: re.sub(r"[A-Za-z0-9]", "-", row)
+        lambda row: re.sub(r"[A-Z0-9]", "-", row)
     )
 
 
