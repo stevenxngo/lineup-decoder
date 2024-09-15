@@ -9,3 +9,8 @@ This directory contains Jupyter notebooks I created during the development of th
 - `02_decryption.ipynb`: This notebook contains the decryption process I used to decrypt the lineup data. The decryption process is based on the assumption that the lineup  is encrypted with a simple substitution cipher. Further information on the algorithm can be found [here](../README.md#algorithm)
 
 - `03_encryption.ipynb`: This notebook contains the process of encrypting plaintext lineup data into ciphertext. This procedure was mainly used to generate test ciphertext data for the decryption process. It is not necessary for the decryption process or the primary goal of the project.
+
+The data used in [`02_decryption.ipynb`](02_decryption.ipynb) is the encoded lineup from Countdown NYE 2024, assumed to be encrypted with a simple substitution cipher. Based on assets available on the website with mappings for `NEW YEARS INVASION` and `SOUTHERN CALIFORNIA 18+` I was able to create an rudimentary dictionary, which expedited the decryption process.
+
+![New Years Invasion](../data/countdown_24/new_years_invasion.png)
+![Southern California 18+](../data/countdown_24/southern_california.png)
