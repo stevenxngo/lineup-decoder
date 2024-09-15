@@ -14,3 +14,5 @@ The data used in [`02_decryption.ipynb`](02_decryption.ipynb) is the encoded lin
 
 ![New Years Invasion](../data/countdown_24/new_years_invasion.png)
 ![Southern California 18+](../data/countdown_24/southern_california.png)
+![Assets](../data/countdown_24/assets.JPG)
+![Teaser](../data/countdown_24/teaser.JPG)

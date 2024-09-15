@@ -1,0 +1,25 @@
+ABC DBEFG HAIEGHJA -> NEW YEARS INVASION
+GJKLMBFA NEOMPJFAHE QR -> SOUTHERN CALHFORNIA 18
+GSPBGK -> S-FESU
+ISLGIFHPE -> V-TSVRIFA
+GSPBGK -> S-FESU
+ISLGIFHPE -> V-TSVRIFA
+
+Q -> 1
+R -> 8
+E -> A
+N -> C
+B -> E
+P -> F
+M -> H
+H -> I
+O -> L
+A -> N
+J -> O
+F -> R
+G -> S
+L -> T
+K -> U
+I -> V
+C -> W
+D -> Y
